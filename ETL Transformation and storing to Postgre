@@ -1,0 +1,43 @@
+## import pandas library
+import pandas as pd
+
+## define the path where files exists
+dataframe1  = pd.read_csv('D://SQLPython//WideReleasesCountDataset1.csv')
+dataframe2  = pd.read_csv('D://SQLPython//WideReleasesCountDataset2.csv')
+
+## concate both files- Transformation 1
+
+Final_dataframe=pd.concat([dataframe1,dataframe2],ignore_index=True)
+
+## Filter column WALT DISNEY < 9 and PARAMOUNT PICTURES < 9
+
+Final_dataframe=Final_dataframe[(Final_dataframe['WALT DISNEY']< 9) | (Final_dataframe['PARAMOUNT PICTURES']<9)]
+
+Final_dataframe.count()  
+Final_dataframe.head()
+
+## storing data to postre sql
+
+## PostgreSQL database adapter for the Python programming
+import psycopg2
+from sqlalchemy import create_engine
+
+
+# Replace these variables with your PostgreSQL database connection details
+db_host = 'localhost'
+db_name = 'testdata'
+db_port = '5432'
+db_user = 'postgres'
+db_password = 'abcabc'
+
+
+
+# Create a connection to the PostgreSQL database
+conn_str = f"postgresql://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}"
+engine = create_engine(conn_str)
+
+# Write the data to the PostgreSQL database
+Final_dataframe.to_sql('Dataset_test', engine, index=False, if_exists='replace')
+
+# Close the database connection
+engine.dispose()
